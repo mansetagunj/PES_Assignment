@@ -1,8 +1,15 @@
-CFLAG_ARM=arm-linux-gnueabi-gcc
-CFLAG_Native=gcc
+CC_ARM:=arm-linux-gnueabi-gcc
+CC_Native:=gcc
+UNAME:= $(shell uname -m)
 
-helloworldBB :helloworld.c
-	$(CFLAG_ARM) -o  helloworld.out helloworld.c
+ifeq ($(UNAME),i386)
+CC=$(CC_Native)
+else ifeq ($(UNAME),arm)
+CC=$(CC_ARM)
+endif
+
+helloworld : helloworld.c 
+	$(CC) -o  helloworld.out helloworld.c
 
 clean:
-	rm *.out
+	rm helloworld.out
