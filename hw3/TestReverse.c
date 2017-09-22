@@ -41,37 +41,47 @@ char reverse(char *str, int length)
 {
 	if (NULL == str)
 		return inputLengthActualLengthMismatchErrCode;
+	
 	if (0 > length)
 		return inputLengthNegativeErrCode;
+	
 	char *startStr = str;
 	char *copyStr = str;
 	int checkLength = 0;
+	
 	while ('\0' != *str)
 	{
 		++checkLength;
 		++str;
 	}
+	
 	if (checkLength != length)
 		return inputLengthMismatchErrCode;
+	
 	if (0 == checkLength)
 		return inputStringEmptyErrCode;
+	
 	//here str points to the null char in the string so decrementing it to point it to last char
 	--str;
+	
 	//divide the length by two to get the midpoint value to use it in the loop
 	int itr = length >> 1;
+	
 	//copyStr points to the first char of the input string. So, forward pointer
 	//str points to the end char of the input string. So, reverse pointer
 	while (itr && copyStr && str)
 	{
-	//swapping routine
-	char temp = *copyStr;
-	*copyStr = *str;
-	*str = temp;
-	++copyStr;	//incrementing the forward pointer
-	--str; 		//decrementing the reverse pointer
-	--itr;
+		//swapping routine
+		char temp = *copyStr;
+		*copyStr = *str;
+		*str = temp;
+		++copyStr;	//incrementing the forward pointer
+		--str; 		//decrementing the reverse pointer
+		--itr;
 	}
+	
 	str = startStr;
+	
 	return successCode;
 }
 
@@ -108,5 +118,6 @@ int main()
 		printf("\nError. Code : %d",status);
 
 	printf("\nTEST END\n");
+	
 	return 0;
 }
