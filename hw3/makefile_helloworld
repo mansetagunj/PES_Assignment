@@ -1,0 +1,8 @@
+CFLAG_ARM=arm-linux-gnueabi-gcc
+CFLAG_Native=gcc
+
+helloworldBB :helloworld.c
+	$(CFLAG_ARM) -o  helloworld.out helloworld.c
+
+clean:
+	rm *.out
