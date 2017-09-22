@@ -1,0 +1,15 @@
+CC_ARM:=arm-linux-gnueabi-gcc
+CC_Native:=gcc
+UNAME:= $(shell uname -m)
+
+ifeq ($(UNAME),i386)
+CC=$(CC_Native)
+else ifeq ($(UNAME),arm)
+CC=$(CC_ARM)
+endif
+
+TestReverse : TestReverse.c 
+	$(CC) -o  TestReverse.out TestReverse.c
+
+clean:
+	rm TestReverse.out
