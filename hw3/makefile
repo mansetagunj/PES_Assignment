@@ -4,7 +4,7 @@ UNAME:= $(shell uname -m)
 
 ifeq ($(UNAME),i386)
 CC=$(CC_Native)
-else ifeq ($(UNAME),arm)
+else ifeq ($(UNAME),armv71)
 CC=$(CC_ARM)
 endif
 
