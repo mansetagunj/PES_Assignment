@@ -7,7 +7,19 @@
 **/
 
 #include "debug.h"
+#ifdef VERBOSE
+#include <stdio.h>
+#endif
 
 void print_memory(uint8_t *start, uint32_t length)
 {
+#ifdef VERBOSE
+		uint32_t tempLength = length;
+		printf("0x");
+		while (tempLength--)
+		{
+			printf("%x", *start++);
+		}
+		printf("/n");
+#endif
 }
