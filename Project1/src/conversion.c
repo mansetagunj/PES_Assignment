@@ -67,7 +67,7 @@ uint8_t my_itoa(int32_t data, uint8_t * ptr, uint32_t base)
         }
 	free(temp_copy);
 	//Terminate with a null character
-        *ptr='\0;
+        *ptr='\0';
         return length;
 }
 
