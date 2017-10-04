@@ -10,6 +10,7 @@
 #define __DEBUG_H__
 
 #include <stdint.h>
+#include <stdlib.h>
 
 /**
 * @brief - Moves the data to/from memory location
