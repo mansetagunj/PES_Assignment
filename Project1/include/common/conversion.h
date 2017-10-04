@@ -16,7 +16,7 @@
 #define BASE_16 (16)
 
 /**
-* @brief - Converts a given Signed Integer into ASCII char string as per the Base (2,8,10,16) 
+* @brief - Converts a given Signed Integer into ASCII char string as per the Base 2 through 16 
 * Takes a signed integer, converts it into the format as per the given base and creates an ASCII char string
 * Returns the length of the ASCII char string
 * @param - data int32_t
