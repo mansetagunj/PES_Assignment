@@ -11,7 +11,6 @@
 #include <malloc.h>
 
 #define SIGN_MASK (0x80000000)
-#define DATA_MASK (0x7FFFFFFF)
 #define ASCII_0 (0x30)
 #define ASCII_7 (0x37)
 #define ASCII_9 (0x39)
@@ -35,13 +34,14 @@ uint32_t power(uint32_t base, uint8_t pow) {
 uint8_t my_itoa(int32_t data, uint8_t * ptr, uint32_t base)
 {
 	uint8_t length=0;
-        uint8_t * temp= (uint8_t *) malloc (sizeof(uint8_t)*32);
+        uint8_t * temp= (uint8_t *) malloc (sizeof(uint8_t)*33);
+	uint8_t * temp_copy= temp;
         //Start with a '-', if the sign bit is set
 	if (data & SIGN_MASK) {
                 *ptr='-';
                 ++ptr;
-		//Consider only the part of the data other than the sign bit now
-		data&= DATA_MASK;
+		//Perform 2's complement for the negative integer
+		data=(~data)+1;
 		++length;
         }
         do {    //Repeatedly divide by base and collect the remainders in temp
@@ -52,18 +52,20 @@ uint8_t my_itoa(int32_t data, uint8_t * ptr, uint32_t base)
         } while(data);
         --temp;
 	//Reverse the order of characters in temp to obtain the actual ASCII string
-        for (uint8_t i=1;i<length;i++) {
-		if (*temp>9)
+        for (uint8_t i=0;i<length;i++) {
+		if (*temp>9) {
 			//ASCII conversion for letters A through F
 			*ptr=(*temp)+ASCII_7;
-		else
+			++ptr;
+		}
+		else if (*temp>=0 && *temp<9) {
 			//ASCII conversion for digits 0 through 9
 			*ptr=(*temp)+ASCII_0;
-                ++ptr;
+			++ptr;
+		}
                 --temp;
         }
-	free(++temp);
-	temp=NULL;
+	free(temp_copy);
 	//Terminate with a null character
         *ptr='\0;
         return length;
@@ -72,9 +74,10 @@ uint8_t my_itoa(int32_t data, uint8_t * ptr, uint32_t base)
 int32_t my_atoi(uint8_t * ptr, uint8_t digits, uint32_t base)
 {
 	int32_t result=0;
-	//Set the sign bit if the ASCII string starts with '-'
+	uint8_t neg_flag=0;
+	//Set the negative flag if the ASCII string starts with '-'
 	if (*ptr=='-') {
-		result|= SIGN_MASK;
+		neg_flag=1;
 		--digits;
 		++ptr;
 	}
@@ -88,6 +91,10 @@ int32_t my_atoi(uint8_t * ptr, uint8_t digits, uint32_t base)
 		result+= (int32_t)(*ptr) * (power(base,digits-1));
 		--digits;
 		++ptr;
+	}
+	//Perform 2's complement on the result if the negative flag is set
+	if (neg_flag) {
+		result=(~result)+1;
 	}
 	return result;
 }
