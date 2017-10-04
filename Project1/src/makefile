@@ -58,6 +58,10 @@ DEPS=$(SRCS:.c=.dep)
 %.o: %.c 
 	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
 
+
+.PHONY: build
+build: $(OBJS) $(DEPS)
+
 .PHONY: clean
 clean:
 	rm -rf $(OBJS)
