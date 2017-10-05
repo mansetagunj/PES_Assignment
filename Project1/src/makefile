@@ -4,6 +4,10 @@ CC_HOST=gcc
 CC_KL25Z=arm-none-eabi-gcc
 CC_BBB=arm-linux-gnueabi-gcc
 
+AR_HOST=ar
+AR_KL25Z=arm-none-eabi-gcc-ar
+AR_BBB=arm-linux-gnueabi-gcc-ar
+
 OPTIMIZATION=0
 C_STD=c99
 ARCH_KL25Z=armv6-M
@@ -44,6 +48,7 @@ LDFLAGS= -Xlinker -Map=$(MAPFILE)
 
 ifeq ($(PLATFORM),KL25Z)
 	CC=$(CC_KL25Z)
+	AR_CC=$(AR_KL25Z)
 	CFLAGS=$(CFLAGS_KL25Z)
 	INCLUDES=$(INCLUDES_KL25Z)
 	LD=$(LD_KL25Z)
@@ -52,6 +57,7 @@ ifeq ($(PLATFORM),KL25Z)
 	CPPFLAGS+= -DPLATFORM_KL25Z
 else ifeq ($(PLATFORM),BBB)
 	CC=$(CC_BBB)
+	AR_CC=$(AR_BBB)
 	CFLAGS=$(CFLAGS_BBB)
 	INCLUDES+=$(INCLUDES_BBB)
 	SRCS=$(SRCS_COMMON_C)
@@ -59,6 +65,7 @@ else ifeq ($(PLATFORM),BBB)
 	#SRCS_S=$(SRCS_KL25Z_S)
 else ifeq ($(PLATFORM),HOST)
 	CC=$(CC_HOST)
+	AR_CC=$(AR_HOST)
 	CFLAGS=$(CFLAGS_HOST)
 	INCLUDES+=$(INCLUDES_HOST)
 	SRCS=$(SRCS_COMMON_C)
@@ -66,6 +73,7 @@ else ifeq ($(PLATFORM),HOST)
 	#SRCS_S=$(SRCS_KL25Z_S)
 else
 	PLATFORM=No PLATFORM defined. Taking HOST as PLATFORM
+	AR_CC=$(AR_HOST)
 	CC=$(CC_HOST)
 	CFLAGS=$(CFLAGS_HOST)
 	INCLUDES=$(INCLUDES_HOST)
@@ -130,16 +138,16 @@ clean:	clean-lib
 
 generate-lib: debug.o memory.o conversion.o project1.o 
 	@echo "Generating Library.\n"
-	ar -cq $(LIB_FILENAME) $?
+	$(AR_CC) -cq $(LIB_FILENAME) $?
 	@echo "Library Created at $(LIB_FILENAME)"
 	@echo "Library $(LIB_FILENAME) contains:"
-	ar -t $(LIB_FILENAME)
+	$(AR_CC) -t $(LIB_FILENAME)
 	@echo ""
 
 .PHONY: build-lib
 build-lib: PRINT_PLATFORM generate-lib main.o
 	@echo "Building and Linking using Library libproject1.a. Generating - $(OUTPUT_ELF) , $(MAPFILE)" 
-	$(CC) $(CFLAGS) $(CPPFLAGS) $(LDFLAGS) $(LD) main.o -L$(LIB_PATH) -l$(BASENAME) -o $(OUTPUT_ELF)
+	$(CC) $(CFLAGS) $(CPPFLAGS) $(LDFLAGS) $(LD) $(INCLUDES) main.o -L$(LIB_PATH) -l$(BASENAME) -o $(OUTPUT_ELF)
 	@echo "Build and Link Complete using Library $(LIB_FILENAME)"
 
 .PHONY: clean-lib
