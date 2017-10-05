@@ -17,9 +17,9 @@ CFLAGS_BBB:= $(CFLAGS_COMMON)
 CFLAGS_HOST:= $(CFLAGS_COMMON)
 
 ifeq ($(VERBOSE),true)
-CPPFLAGS:= -DVERBOSE
+CPPFLAGS:= -DVERBOSE -DPROJECT1
 else
-CPPFLAGS:=
+CPPFLAGS:= -DPROJECT1
 endif
 
 BASENAME= project1
@@ -29,11 +29,14 @@ LINKERFILE.MD= ./../platform/MKL25Z128xxx4_flash.ld
 LD_KL25Z= -T $(LINKERFILE.MD)
 
 INCLUDES_COMMON:= -I ./../include/common/
+
 INCLUDES_KL25Z := -I ./../include/kl25z \
 		 -I ./../include/CMSIS \
 		 $(INCLUDES_COMMON)
+
 INCLUDES_BBB := 	-I ./../include/CMSIS \
 	      	$(INCLUDES_COMMON)
+
 INCLUDES_HOST := $(INCLUDES_COMMON)
 
 
@@ -59,7 +62,6 @@ INCLUDES+=$(INCLUDES_HOST)
 SRCS=$(SRCS_COMMON_C)
 LD=
 else
-#echo 'No Platform specified. Taking Default.' 
 CC=$(CC_HOST)
 CFLAGS=$(CFLAGS_HOST)
 INCLUDES=$(INCLUDES_HOST)
@@ -74,27 +76,40 @@ PREPS=$(SRCS:.c=.i)
 OUTPUT_ELF=$(BASENAME).elf	
 
 
-%.o: %.c 
+%.o: %.c
+	@echo "$(CC) - Building $@ from $<"	
 	$(CC) $(CFLAGS) $(CPPFLAGS) $(INCLUDES) -c $< -o $@
+	@echo "$(CC) - Build Finish"
 
 %.dep: %.c 
+	@echo "$(CC) - Building $@ from $<"	
 	$(CC) $(CFLAGS) $(CPPFLAGS) $(INCLUDES) -c $< -M $@
+	@echo "$(CC) - Build Finish"
+
 
 %.asm: %.c 
+	@echo "$(CC) - Building $@ from $<"	
 	$(CC) $(CFLAGS) $(CPPFLAGS) $(INCLUDES) -c $< -S $@
+	@echo "$(CC) - Build Finish"
+
 
 %.i: %.c 
+	@echo "$(CC) - Building $@ from $<"	
 	$(CC) $(CFLAGS) $(CPPFLAGS) $(INCLUDES) -c $< -E $@
+	@echo "$(CC) - Build Finish"
 
 .PHONY: compile-all
 compile-all: $(OBJS)
 
 .PHONY: build
-build: $(OBJS)
+build: $(OBJS) $(DEPS)
+	@echo "Using $(CC) - Building and Linknig. Generating - $(OUTPUT_ELF) , $(MAPFILE)" 
 	$(CC) $(CFLAGS) $(CPPFLAGS) $(LDFLAGS) $(LD) $(INCLUDES) $? -o $(OUTPUT_ELF)
+	@echo "Using $(CC) - Build and Link Complete"
 
 .PHONY: clean
 clean:
+	@echo "Removing all the .o .asm .i .elf .map files generated"
 	rm -rf $(OBJS) $(ASMS) $(PREPS) $(DEPS) $(OUTPUT_ELF) $(MAPFILE)
-
+	@echo "Clean Complete"
 
