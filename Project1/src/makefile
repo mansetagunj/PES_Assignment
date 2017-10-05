@@ -79,6 +79,8 @@ DEPS=$(SRCS:.c=.d)
 ASMS=$(SRCS:.c=.asm)
 PREPS=$(SRCS:.c=.i)
 OUTPUT_ELF=$(BASENAME).elf	
+LIB_PATH=./../lib/
+LIB_FILENAME=$(LIB_PATH)lib$(BASENAME).a
 
 .PHONY:PRINT_PLATFORM
 PRINT_PLATFORM:
@@ -116,13 +118,33 @@ compile-all: PRINT_PLATFORM $(OBJS)
 
 .PHONY: build
 build: 	PRINT_PLATFORM $(OBJS) $(DEPS)
-	@echo "Using $(CC) - Building and Linknig. Generating - $(OUTPUT_ELF) , $(MAPFILE)" 
+	@echo "Building and Linking. Generating - $(OUTPUT_ELF) , $(MAPFILE)\n" 
 	$(CC) $(CFLAGS) $(CPPFLAGS) $(LDFLAGS) $(LD) $(INCLUDES) $(OBJS) -o $(OUTPUT_ELF)
-	@echo "Using $(CC) - Build and Link Complete"
+	@echo "Build and Link Complete\n"
 
 .PHONY: clean
-clean:
-	@echo "Removing all the .o .asm .i .elf .map files generated"
+clean:	clean-lib
+	@echo "Removing all the .o .asm .i .elf .map files generated\n"
 	rm -rf $(OBJS) startup_MKL25Z4.o system_MKL25Z4.o $(ASMS) $(PREPS) $(DEPS) system_MKL25Z4.d $(OUTPUT_ELF) $(MAPFILE)
-	@echo "Clean Complete"
+	@echo "Clean Complete\n"
+
+generate-lib: debug.o memory.o conversion.o project1.o 
+	@echo "Generating Library.\n"
+	ar -cq $(LIB_FILENAME) $?
+	@echo "Library Created at $(LIB_FILENAME)"
+	@echo "Library $(LIB_FILENAME) contains:"
+	ar -t $(LIB_FILENAME)
+	@echo ""
+
+.PHONY: build-lib
+build-lib: PRINT_PLATFORM generate-lib main.o
+	@echo "Building and Linking using Library libproject1.a. Generating - $(OUTPUT_ELF) , $(MAPFILE)" 
+	$(CC) $(CFLAGS) $(CPPFLAGS) $(LDFLAGS) $(LD) main.o -L$(LIB_PATH) -l$(BASENAME) -o $(OUTPUT_ELF)
+	@echo "Build and Link Complete using Library $(LIB_FILENAME)"
+
+.PHONY: clean-lib
+clean-lib:
+	@echo "Removing $(LIB_FILENAME)\n"
+	rm -rf $(LIB_FILENAME)
+	@echo "Clean LIB complete\n"
 
