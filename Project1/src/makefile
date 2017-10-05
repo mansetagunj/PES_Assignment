@@ -61,18 +61,21 @@ ifeq ($(PLATFORM),KL25Z)
 	SRCS_S=$(SRCS_KL25Z_S)
 	CPPFLAGS+= -DPLATFORM_KL25Z
 	OBJS_LIB:=$(SRCS_KL25Z_C:.c=.o) $(SRCS_KL25Z_S:.S=.o)
+	SIZE=arm-none-eabi-size
 else ifeq ($(PLATFORM),BBB)
 	CC=$(CC_BBB)
 	AR_CC=$(AR_BBB)
 	CFLAGS=$(CFLAGS_BBB)
 	INCLUDES+=$(INCLUDES_BBB)
 	SRCS=$(SRCS_COMMON_C)
+	SIZE=arm-linux-gnueabi-size
 else ifeq ($(PLATFORM),HOST)
 	CC=$(CC_HOST)
 	AR_CC=$(AR_HOST)
 	CFLAGS=$(CFLAGS_HOST)
 	INCLUDES+=$(INCLUDES_HOST)
 	SRCS=$(SRCS_COMMON_C)
+	SIZE=size
 else
 	PLATFORM=No PLATFORM defined. Taking HOST as PLATFORM
 	AR_CC=$(AR_HOST)
@@ -80,6 +83,7 @@ else
 	CFLAGS=$(CFLAGS_HOST)
 	INCLUDES=$(INCLUDES_HOST)
 	SRCS=$(SRCS_COMMON_C)
+	SIZE=size
 endif
 
 OBJS=$(SRCS:.c=.o) $(SRCS_S:.S=.o)
@@ -123,10 +127,11 @@ PRINT_PLATFORM:
 compile-all: PRINT_PLATFORM $(OBJS)
 
 .PHONY: build
-build: 	PRINT_PLATFORM $(OBJS) $(DEPS)
+build: 	PRINT_PLATFORM $(OBJS) $(DEPS) 
 	@echo "Building and Linking. Generating - $(OUTPUT_ELF) , $(MAPFILE)\n" 
 	$(CC) $(CFLAGS) $(CPPFLAGS) $(LDFLAGS) $(LINKER) $(INCLUDES) $(OBJS) -o $(OUTPUT_ELF)
 	@echo "Build and Link Complete\n"
+	
 
 .PHONY: clean
 clean:	clean-lib
@@ -145,7 +150,7 @@ generate-lib: $(OBJS_LIB)
 
 .PHONY: build-lib
 build-lib: PRINT_PLATFORM generate-lib main.o
-	@echo "Building and Linking using Library libproject1.a. Generating - $(OUTPUT_ELF) , $(MAPFILE)" 
+	@echo "Building and Linking using Library libproject1.a. Generating - $(OUTPUT_ELF), $(MAPFILE)" 
 	$(CC) $(CFLAGS) $(CPPFLAGS) $(LDFLAGS) $(LINKER) $(INCLUDES) main.o -L$(LIB_PATH) -l$(BASENAME) -o $(OUTPUT_ELF)
 	@echo "Build and Link Complete using Library $(LIB_FILENAME)"
 
@@ -156,5 +161,20 @@ clean-lib:
 	@echo "Clean LIB complete\n"
 
 .PHONY: size
-size: build
-	size --format=svr project1.elf
+size:	build
+	$(SIZE) --format=svr project1.elf
+	#size --format=svr project1.elf
+
+.PHONY: help
+help:
+	@echo "\tBuilds available : \n\
+		1. compile-all 	: Compiles all the .c/.s files to .o files \n\
+		2. build	: Compiles and Links all the .o files to .elf output file\n \
+		3. clean	: Cleans all the make generated files \n\
+	       	4. generate-lib	: Generates the .a library from .o files \n\
+		5. build-lib	: Generates the .a library, links it with main.o to generate .elf output file\n \
+		6. size		: Executes 2. build target and creates a code size file.\n \
+	     	Switches available:\n\
+		1. PLATFORM = { HOST, BBB, KL25Z }\n \
+		2. VERBOSE  = true\n"
+
