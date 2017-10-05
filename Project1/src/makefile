@@ -70,33 +70,33 @@ LD=
 endif
 
 OBJS=$(SRCS:.c=.o)
-DEPS=$(SRCS:.c=.dep)
+DEPS=$(SRCS:.c=.d)
 ASMS=$(SRCS:.c=.asm)
 PREPS=$(SRCS:.c=.i)
 OUTPUT_ELF=$(BASENAME).elf	
 
 
 %.o: %.c
-	@echo "$(CC) - Building $@ from $<"	
+	@echo "Using $(CC) - Building $@ from $<"	
 	$(CC) $(CFLAGS) $(CPPFLAGS) $(INCLUDES) -c $< -o $@
-	@echo "$(CC) - Build Finish"
+	@echo "Using $(CC) - Build Finish"
 
-%.dep: %.c 
-	@echo "$(CC) - Building $@ from $<"	
-	$(CC) $(CFLAGS) $(CPPFLAGS) $(INCLUDES) -c $< -M $@
-	@echo "$(CC) - Build Finish"
+%.d: %.c 
+	@echo "Using $(CC) - Building $@ from $<"	
+	$(CC) $(CFLAGS) $(CPPFLAGS) $(INCLUDES) -M $< -o $@
+	@echo "Using $(CC) - Build Finish"
 
 
 %.asm: %.c 
-	@echo "$(CC) - Building $@ from $<"	
-	$(CC) $(CFLAGS) $(CPPFLAGS) $(INCLUDES) -c $< -S $@
-	@echo "$(CC) - Build Finish"
+	@echo "Using $(CC) - Building $@ from $<"	
+	$(CC) $(CFLAGS) $(CPPFLAGS) $(INCLUDES) -S $< -o $@
+	@echo "Using $(CC) - Build Finish"
 
 
 %.i: %.c 
-	@echo "$(CC) - Building $@ from $<"	
-	$(CC) $(CFLAGS) $(CPPFLAGS) $(INCLUDES) -c $< -E $@
-	@echo "$(CC) - Build Finish"
+	@echo "Using $(CC) - Building $@ from $<"	
+	$(CC) $(CFLAGS) $(CPPFLAGS) $(INCLUDES) -E $< -o $@
+	@echo "Using $(CC) - Build Finish"
 
 .PHONY: compile-all
 compile-all: $(OBJS)
@@ -104,7 +104,7 @@ compile-all: $(OBJS)
 .PHONY: build
 build: $(OBJS) $(DEPS)
 	@echo "Using $(CC) - Building and Linknig. Generating - $(OUTPUT_ELF) , $(MAPFILE)" 
-	$(CC) $(CFLAGS) $(CPPFLAGS) $(LDFLAGS) $(LD) $(INCLUDES) $? -o $(OUTPUT_ELF)
+	$(CC) $(CFLAGS) $(CPPFLAGS) $(LDFLAGS) $(LD) $(INCLUDES) $(OBJS) -o $(OUTPUT_ELF)
 	@echo "Using $(CC) - Build and Link Complete"
 
 .PHONY: clean
