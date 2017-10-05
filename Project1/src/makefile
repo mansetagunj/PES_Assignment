@@ -4,6 +4,7 @@ CC_HOST=gcc
 CC_KL25Z=arm-none-eabi-gcc
 CC_BBB=arm-linux-gnueabi-gcc
 
+#VARIABLE for LIB creation
 AR_HOST=ar
 AR_KL25Z=arm-none-eabi-gcc-ar
 AR_BBB=arm-linux-gnueabi-gcc-ar
@@ -15,11 +16,12 @@ CPU_KL25Z=cortex-m0plus
 SPECS_KL25Z=nosys.specs
 CFLAGS_COMMON:= -Wall -Werror -g -O$(OPTIMIZATION) -std=$(C_STD)
 CFLAGS_KL25Z:= -mcpu=$(CPU_KL25Z) -mthumb -march=$(ARCH_KL25Z) \
-	      -mfpu=fpv4-sp-d16 --specs=$(SPECS_KL25Z) \
+	      -mfpu=fpv4-sp-d16 --specs=$(SPECS_KL25Z) -mfloat-abi=soft\
 	      $(CFLAGS_COMMON)
 CFLAGS_BBB:= $(CFLAGS_COMMON)
 CFLAGS_HOST:= $(CFLAGS_COMMON)
 
+#Compile time switches for Selecting the Project1 and VERBOSE
 ifeq ($(VERBOSE),true)
 	CPPFLAGS:= -DVERBOSE -DPROJECT1
 else
@@ -28,9 +30,12 @@ endif
 
 BASENAME= project1
 MAPFILE=$(BASENAME).map
+OUTPUT_ELF=$(BASENAME).elf	
+LIB_PATH=./../lib/
+LIB_FILENAME=$(LIB_PATH)lib$(BASENAME).a
 
-LINKERFILE.MD= ./../platform/MKL25Z128xxx4_flash.ld
-LD_KL25Z= -T $(LINKERFILE.MD)
+LINKERFILE.LD= ./../platform/MKL25Z128xxx4_flash.ld
+LD_KL25Z= -T $(LINKERFILE.LD)
 
 INCLUDES_COMMON:=-I ./../include/common/
 
@@ -51,26 +56,23 @@ ifeq ($(PLATFORM),KL25Z)
 	AR_CC=$(AR_KL25Z)
 	CFLAGS=$(CFLAGS_KL25Z)
 	INCLUDES=$(INCLUDES_KL25Z)
-	LD=$(LD_KL25Z)
+	LINKER=$(LD_KL25Z)
 	SRCS=$(SRCS_COMMON_C) $(SRCS_KL25Z_C)
 	SRCS_S=$(SRCS_KL25Z_S)
 	CPPFLAGS+= -DPLATFORM_KL25Z
+	OBJS_LIB:=$(SRCS_KL25Z_C:.c=.o) $(SRCS_KL25Z_S:.S=.o)
 else ifeq ($(PLATFORM),BBB)
 	CC=$(CC_BBB)
 	AR_CC=$(AR_BBB)
 	CFLAGS=$(CFLAGS_BBB)
 	INCLUDES+=$(INCLUDES_BBB)
 	SRCS=$(SRCS_COMMON_C)
-	LD=
-	#SRCS_S=$(SRCS_KL25Z_S)
 else ifeq ($(PLATFORM),HOST)
 	CC=$(CC_HOST)
 	AR_CC=$(AR_HOST)
 	CFLAGS=$(CFLAGS_HOST)
 	INCLUDES+=$(INCLUDES_HOST)
 	SRCS=$(SRCS_COMMON_C)
-	LD=
-	#SRCS_S=$(SRCS_KL25Z_S)
 else
 	PLATFORM=No PLATFORM defined. Taking HOST as PLATFORM
 	AR_CC=$(AR_HOST)
@@ -78,17 +80,13 @@ else
 	CFLAGS=$(CFLAGS_HOST)
 	INCLUDES=$(INCLUDES_HOST)
 	SRCS=$(SRCS_COMMON_C)
-	LD=
-	#SRCS_S=$(SRCS_KL25Z_S)
 endif
 
 OBJS=$(SRCS:.c=.o) $(SRCS_S:.S=.o)
 DEPS=$(SRCS:.c=.d)
 ASMS=$(SRCS:.c=.asm)
 PREPS=$(SRCS:.c=.i)
-OUTPUT_ELF=$(BASENAME).elf	
-LIB_PATH=./../lib/
-LIB_FILENAME=$(LIB_PATH)lib$(BASENAME).a
+OBJS_LIB+= debug.o memory.o conversion.o project1.o
 
 .PHONY:PRINT_PLATFORM
 PRINT_PLATFORM:
@@ -127,7 +125,7 @@ compile-all: PRINT_PLATFORM $(OBJS)
 .PHONY: build
 build: 	PRINT_PLATFORM $(OBJS) $(DEPS)
 	@echo "Building and Linking. Generating - $(OUTPUT_ELF) , $(MAPFILE)\n" 
-	$(CC) $(CFLAGS) $(CPPFLAGS) $(LDFLAGS) $(LD) $(INCLUDES) $(OBJS) -o $(OUTPUT_ELF)
+	$(CC) $(CFLAGS) $(CPPFLAGS) $(LDFLAGS) $(LINKER) $(INCLUDES) $(OBJS) -o $(OUTPUT_ELF)
 	@echo "Build and Link Complete\n"
 
 .PHONY: clean
@@ -136,7 +134,8 @@ clean:	clean-lib
 	rm -rf $(OBJS) startup_MKL25Z4.o system_MKL25Z4.o $(ASMS) $(PREPS) $(DEPS) system_MKL25Z4.d $(OUTPUT_ELF) $(MAPFILE)
 	@echo "Clean Complete\n"
 
-generate-lib: debug.o memory.o conversion.o project1.o 
+.PHONY: generate-lib
+generate-lib: $(OBJS_LIB) 
 	@echo "Generating Library.\n"
 	$(AR_CC) -cq $(LIB_FILENAME) $?
 	@echo "Library Created at $(LIB_FILENAME)"
@@ -147,7 +146,7 @@ generate-lib: debug.o memory.o conversion.o project1.o
 .PHONY: build-lib
 build-lib: PRINT_PLATFORM generate-lib main.o
 	@echo "Building and Linking using Library libproject1.a. Generating - $(OUTPUT_ELF) , $(MAPFILE)" 
-	$(CC) $(CFLAGS) $(CPPFLAGS) $(LDFLAGS) $(LD) $(INCLUDES) main.o -L$(LIB_PATH) -l$(BASENAME) -o $(OUTPUT_ELF)
+	$(CC) $(CFLAGS) $(CPPFLAGS) $(LDFLAGS) $(LINKER) $(INCLUDES) main.o -L$(LIB_PATH) -l$(BASENAME) -o $(OUTPUT_ELF)
 	@echo "Build and Link Complete using Library $(LIB_FILENAME)"
 
 .PHONY: clean-lib
