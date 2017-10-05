@@ -6,8 +6,8 @@
 * @date 02/10/2017
 **/
 
-#ifndef __DEBUG_H__
-#define __DEBUG_H__
+#ifndef __DEBUGH_H__
+#define __DEBUGH_H__
 
 #include <stdint.h>
 
