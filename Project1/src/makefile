@@ -17,9 +17,9 @@ CFLAGS_BBB:= $(CFLAGS_COMMON)
 CFLAGS_HOST:= $(CFLAGS_COMMON)
 
 ifeq ($(VERBOSE),true)
-CPPFLAGS:= -DVERBOSE -DPROJECT1
+	CPPFLAGS:= -DVERBOSE -DPROJECT1
 else
-CPPFLAGS:= -DPROJECT1
+	CPPFLAGS:= -DPROJECT1
 endif
 
 BASENAME= project1
@@ -43,34 +43,34 @@ INCLUDES_HOST := $(INCLUDES_COMMON)
 LDFLAGS= -Xlinker -Map=$(MAPFILE)
 
 ifeq ($(PLATFORM),KL25Z)
-CC=$(CC_KL25Z)
-CFLAGS=$(CFLAGS_KL25Z)
-INCLUDES=$(INCLUDES_KL25Z)
-LD=$(LD_KL25Z)
-SRCS=$(SRCS_COMMON_C) $(SRCS_KL25Z_C)
-SRCS_S=$(SRCS_KL25Z_S)
-CPPFLAGS+= -DPLATFORM_KL25Z
+	CC=$(CC_KL25Z)
+	CFLAGS=$(CFLAGS_KL25Z)
+	INCLUDES=$(INCLUDES_KL25Z)
+	LD=$(LD_KL25Z)
+	SRCS=$(SRCS_COMMON_C) $(SRCS_KL25Z_C)
+	SRCS_S=$(SRCS_KL25Z_S)
+	CPPFLAGS+= -DPLATFORM_KL25Z
 else ifeq ($(PLATFORM),BBB)
-CC=$(CC_BBB)
-CFLAGS=$(CFLAGS_BBB)
-INCLUDES+=$(INCLUDES_BBB)
-SRCS=$(SRCS_COMMON_C)
-LD=
-SRCS_S=$(SRCS_KL25Z_S)
+	CC=$(CC_BBB)
+	CFLAGS=$(CFLAGS_BBB)
+	INCLUDES+=$(INCLUDES_BBB)
+	SRCS=$(SRCS_COMMON_C)
+	LD=
+	#SRCS_S=$(SRCS_KL25Z_S)
 else ifeq ($(PLATFORM),HOST)
-CC=$(CC_HOST)
-CFLAGS=$(CFLAGS_HOST)
-INCLUDES+=$(INCLUDES_HOST)
-SRCS=$(SRCS_COMMON_C)
-LD=
-#SRCS_S=$(SRCS_KL25Z_S)
+	CC=$(CC_HOST)
+	CFLAGS=$(CFLAGS_HOST)
+	INCLUDES+=$(INCLUDES_HOST)
+	SRCS=$(SRCS_COMMON_C)
+	LD=
+	#SRCS_S=$(SRCS_KL25Z_S)
 else
-CC=$(CC_HOST)
-CFLAGS=$(CFLAGS_HOST)
-INCLUDES=$(INCLUDES_HOST)
-SRCS=$(SRCS_COMMON_C)
-LD=
-#SRCS_S=$(SRCS_KL25Z_S)
+	CC=$(CC_HOST)
+	CFLAGS=$(CFLAGS_HOST)
+	INCLUDES=$(INCLUDES_HOST)
+	SRCS=$(SRCS_COMMON_C)
+	LD=
+	#SRCS_S=$(SRCS_KL25Z_S)
 endif
 
 OBJS=$(SRCS:.c=.o) $(SRCS_S:.S=.o)
@@ -81,31 +81,31 @@ OUTPUT_ELF=$(BASENAME).elf
 
 
 %.o: %.c
-	@echo "Using $(CC) - Building $@ from $<"	
+	@echo "Building $@ from $<"	
 	$(CC) $(CFLAGS) $(CPPFLAGS) $(INCLUDES) -c $< -o $@
-	@echo "Using $(CC) - Build Finish"
+	@echo "Build Finish\n"
 
 %.d: %.c 
-	@echo "Using $(CC) - Building $@ from $<"	
+	@echo "Building $@ from $<"	
 	$(CC) $(CFLAGS) $(CPPFLAGS) $(INCLUDES) -M $< -o $@
-	@echo "Using $(CC) - Build Finish"
+	@echo "Build Finish\n"
 
 %.o: %.S
-	@echo "Using $(CC) - Building $@ from $<"	
+	@echo "Building $@ from $<"	
 	$(CC) $(CFLAGS) $(CPPFLAGS) $(INCLUDES) -c $< -o $@
-	@echo "Using $(CC) - Build Finish"
+	@echo "Build Finish\n"
 
 
 %.asm: %.c 
-	@echo "Using $(CC) - Building $@ from $<"	
+	@echo "Building $@ from $<"	
 	$(CC) $(CFLAGS) $(CPPFLAGS) $(INCLUDES) -S $< -o $@
-	@echo "Using $(CC) - Build Finish"
+	@echo "Build Finish\n"
 
 
 %.i: %.c 
-	@echo "Using $(CC) - Building $@ from $<"	
+	@echo "Building $@ from $<"	
 	$(CC) $(CFLAGS) $(CPPFLAGS) $(INCLUDES) -E $< -o $@
-	@echo "Using $(CC) - Build Finish"
+	@echo "Build Finish\n"
 
 .PHONY: compile-all
 compile-all: $(OBJS)
@@ -119,6 +119,6 @@ build: $(OBJS) $(DEPS)
 .PHONY: clean
 clean:
 	@echo "Removing all the .o .asm .i .elf .map files generated"
-	rm -rf $(OBJS) $(ASMS) $(PREPS) $(DEPS) $(OUTPUT_ELF) $(MAPFILE)
+	rm -rf $(OBJS) startup_MKL25Z4.o system_MKL25Z4.o $(ASMS) $(PREPS) $(DEPS) system_MKL25Z4.d $(OUTPUT_ELF) $(MAPFILE)
 	@echo "Clean Complete"
 
