@@ -155,3 +155,6 @@ clean-lib:
 	rm -rf $(LIB_FILENAME)
 	@echo "Clean LIB complete\n"
 
+.PHONY: size
+size: build
+	size --format=svr project1.elf
