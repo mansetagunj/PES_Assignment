@@ -8,8 +8,8 @@
 
 #ifdef PROJECT1
 #include "project1.h"
-#include <stdlib.h>
 #endif // PROJECT1
+
 int main()
 {
 #ifdef PROJECT1
