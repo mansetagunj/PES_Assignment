@@ -79,7 +79,7 @@ int8_t* my_memset(uint8_t * src, size_t length, uint8_t value)
 		}
 		p_src = NULL;
 	}	
-	return src;
+	return (int8_t*)src;
 }
 
 uint8_t* my_memzero(uint8_t * src, size_t length)
@@ -102,8 +102,8 @@ uint8_t* my_reverse(uint8_t *src, size_t length)
 {
 	if (NULL != src && 0 < length)
 	{
-		char *forwardItr = src;
-		char *backwardItr = src+length-1;
+		uint8_t *forwardItr = src;
+		uint8_t *backwardItr = src+length-1;
 
 		//divide the length by two to get the midpoint value to use it in the loop
 		int itr = length >> 1;
