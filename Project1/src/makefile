@@ -14,7 +14,7 @@ CFLAGS_KL25Z:= -mcpu=$(CPU_KL25Z) -mthumb -march=$(ARCH_KL25Z) \
 	      -mfpu=fpv4-sp-d16 --specs=$(SPECS_KL25Z) \
 	      $(CFLAGS_COMMON)
 CFLAGS_BBB:= $(CFLAGS_COMMON)
-CFLAG_HOST:= $(CFLAGS_COMMON)
+CFLAGS_HOST:= $(CFLAGS_COMMON)
 
 ifeq ($(VERBOSE),true)
 CPPFLAGS:= -DVERBOSE
