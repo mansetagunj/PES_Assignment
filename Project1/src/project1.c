@@ -17,7 +17,7 @@
  *
  */
 
-#include <stdio.h>
+//#include <stdio.h>
 #include <stdint.h>
 #include "platform.h"
 #include "project1.h"
