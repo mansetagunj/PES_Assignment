@@ -65,6 +65,7 @@ else ifeq ($(PLATFORM),HOST)
 	LD=
 	#SRCS_S=$(SRCS_KL25Z_S)
 else
+	PLATFORM=No PLATFORM defined. Taking HOST as PLATFORM
 	CC=$(CC_HOST)
 	CFLAGS=$(CFLAGS_HOST)
 	INCLUDES=$(INCLUDES_HOST)
@@ -79,6 +80,9 @@ ASMS=$(SRCS:.c=.asm)
 PREPS=$(SRCS:.c=.i)
 OUTPUT_ELF=$(BASENAME).elf	
 
+.PHONY:PRINT_PLATFORM
+PRINT_PLATFORM:
+	@echo "\n-----BUILDING FOR PLATFORM - $(PLATFORM)----------\n"
 
 %.o: %.c
 	@echo "Building $@ from $<"	
@@ -108,10 +112,10 @@ OUTPUT_ELF=$(BASENAME).elf
 	@echo "Build Finish\n"
 
 .PHONY: compile-all
-compile-all: $(OBJS)
+compile-all: PRINT_PLATFORM $(OBJS)
 
 .PHONY: build
-build: $(OBJS) $(DEPS)
+build: 	PRINT_PLATFORM $(OBJS) $(DEPS)
 	@echo "Using $(CC) - Building and Linknig. Generating - $(OUTPUT_ELF) , $(MAPFILE)" 
 	$(CC) $(CFLAGS) $(CPPFLAGS) $(LDFLAGS) $(LD) $(INCLUDES) $(OBJS) -o $(OUTPUT_ELF)
 	@echo "Using $(CC) - Build and Link Complete"
