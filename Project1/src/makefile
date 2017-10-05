@@ -28,13 +28,13 @@ MAPFILE=$(BASENAME).map
 LINKERFILE.MD= ./../platform/MKL25Z128xxx4_flash.ld
 LD_KL25Z= -T $(LINKERFILE.MD)
 
-INCLUDES_COMMON:= -I ./../include/common/
+INCLUDES_COMMON:=-I ./../include/common/
 
-INCLUDES_KL25Z := -I ./../include/kl25z \
-		 -I ./../include/CMSIS \
-		 $(INCLUDES_COMMON)
+INCLUDES_KL25Z:=-I ./../include/kl25z \
+		-I ./../include/CMSIS \
+		$(INCLUDES_COMMON)
 
-INCLUDES_BBB := 	-I ./../include/CMSIS \
+INCLUDES_BBB:=	-I ./../include/CMSIS \
 	      	$(INCLUDES_COMMON)
 
 INCLUDES_HOST := $(INCLUDES_COMMON)
@@ -48,6 +48,7 @@ CFLAGS=$(CFLAGS_KL25Z)
 INCLUDES=$(INCLUDES_KL25Z)
 LD=$(LD_KL25Z)
 SRCS=$(SRCS_COMMON_C) $(SRCS_KL25Z_C)
+SRCS_S=$(SRCS_KL25Z_S)
 CPPFLAGS+= -DPLATFORM_KL25Z
 else ifeq ($(PLATFORM),BBB)
 CC=$(CC_BBB)
@@ -55,21 +56,24 @@ CFLAGS=$(CFLAGS_BBB)
 INCLUDES+=$(INCLUDES_BBB)
 SRCS=$(SRCS_COMMON_C)
 LD=
+SRCS_S=$(SRCS_KL25Z_S)
 else ifeq ($(PLATFORM),HOST)
 CC=$(CC_HOST)
 CFLAGS=$(CFLAGS_HOST)
 INCLUDES+=$(INCLUDES_HOST)
 SRCS=$(SRCS_COMMON_C)
 LD=
+#SRCS_S=$(SRCS_KL25Z_S)
 else
 CC=$(CC_HOST)
 CFLAGS=$(CFLAGS_HOST)
 INCLUDES=$(INCLUDES_HOST)
 SRCS=$(SRCS_COMMON_C)
 LD=
+#SRCS_S=$(SRCS_KL25Z_S)
 endif
 
-OBJS=$(SRCS:.c=.o)
+OBJS=$(SRCS:.c=.o) $(SRCS_S:.S=.o)
 DEPS=$(SRCS:.c=.d)
 ASMS=$(SRCS:.c=.asm)
 PREPS=$(SRCS:.c=.i)
@@ -84,6 +88,11 @@ OUTPUT_ELF=$(BASENAME).elf
 %.d: %.c 
 	@echo "Using $(CC) - Building $@ from $<"	
 	$(CC) $(CFLAGS) $(CPPFLAGS) $(INCLUDES) -M $< -o $@
+	@echo "Using $(CC) - Build Finish"
+
+%.o: %.S
+	@echo "Using $(CC) - Building $@ from $<"	
+	$(CC) $(CFLAGS) $(CPPFLAGS) $(INCLUDES) -c $< -o $@
 	@echo "Using $(CC) - Build Finish"
 
 
