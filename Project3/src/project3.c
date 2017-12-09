@@ -49,21 +49,21 @@ void project3()
 	mcg_Init();
 	UART0_configure(BAUD_115200);
 	rtc_init();
-//	logger_log(INFO,"CLOCK INIT");
-//	logger_log(INFO,"UART0 INIT");
-//	logger_log(INFO,"BUILD EPOCH TIME: %u",BUILD_EPOCH_TIME);
-//	logger_log(LOGGER_INITIALZED,"");
+	logger_log(INFO,"CLOCK INIT");
+	logger_log(INFO,"UART0 INIT");
+	logger_log(INFO,"BUILD EPOCH TIME: %u",BUILD_EPOCH_TIME);
+	logger_log(LOGGER_INITIALZED,"");
 
 	GPIO_Red_Led_En();
 	GPIO_Red_Off();
 
 	logger_log(GPIO_INITIALZED,"");
-//
+
 	//timer0_configure();
-//	logger_log(INFO,"MEMORY - HEAP SIZE: 0x%x",&HEAP_SIZE);
-//	logger_log(INFO,"MEMORY - STACK SIZE: 0x%x",&STACK_SIZE);
-//	logger_log(INFO,"MEMORY - HEAP END: 0x%x",&__HeapLimit);
-	//logger_log(SYSTEM_BOOTED,"PES PROJECT 3 - KL25Z");
+	logger_log(INFO,"MEMORY - HEAP SIZE: 0x%x",&HEAP_SIZE);
+	logger_log(INFO,"MEMORY - STACK SIZE: 0x%x",&STACK_SIZE);
+	logger_log(INFO,"MEMORY - HEAP END: 0x%x",&__HeapLimit);
+	logger_log(SYSTEM_BOOTED,"PES PROJECT 3 - KL25Z");
 
 	__enable_irq();
 
@@ -75,7 +75,7 @@ void project3()
 
 	logger_log(SYSTEM_INITIALIZED,"");
 #ifdef PLATFORM_KL25Z
-	//Nordic_Test();
+	Nordic_Test();
 #endif
 
 

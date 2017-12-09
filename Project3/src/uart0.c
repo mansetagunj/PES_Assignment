@@ -32,10 +32,10 @@
 #define _OSR				(OSR_16)
 #define _OSR_REG			(_OSR_16_REG)
 
-#define BUFFER_TX_LEN		(2048)
+#define BUFFER_TX_LEN		(4096)
 #define BUFFER_RX_LEN		(64)
 
-const uint16_t BUFFER_COUNT_THRESHOLD = ((BUFFER_TX_LEN)/2);
+const uint16_t BUFFER_COUNT_THRESHOLD = ((BUFFER_TX_LEN*2)/3);
 
 CB_t *UART0_TX_buffer = NULL;
 CB_t *UART0_RX_buffer = NULL;
