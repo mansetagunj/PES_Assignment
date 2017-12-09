@@ -23,6 +23,8 @@ https://github.com/mansetagunj/PES_Assignment/blob/master/Project3/Time%20Profil
 Results on Host machine with -O3
 https://github.com/mansetagunj/PES_Assignment/blob/master/Project3/Time%20Profiler%20Results/HOST_opt_results.txt
 
+Nordic Test Results
+https://github.com/mansetagunj/PES_Assignment/blob/master/Project3/Time%20Profiler%20Results/Nordic%20Test%20Results.txt
 
 Observations:
 For FRDM_KL25Z, the DMA version takes a significantly lesser time than the non-DMA version, since the transfer is offloaded from the processor. Further, for the non-DMA version, the transfer time is reduced with increase in optimization to O3. The least amount of time however, is for the standard library function.
