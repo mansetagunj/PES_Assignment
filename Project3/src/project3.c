@@ -285,7 +285,26 @@ void Nordic_Test()
 	logger_log(INFO,"TX ADDRESSES GET: 0x%x%x%x%x\r\n",readAddr[0],readAddr[1],readAddr[2],readAddr[3],readAddr[4]);
 	free(readAddr);
 
+	sendValue = 0x10;
+	NRF_write_rf_ch(sendValue);
+	readValue = NRF_read_rf_ch();
+	if(readValue == sendValue)
+	{
+		logger_log(INFO,"Write/Read RF CH Value Matched");
+		logger_log(INFO,"Sent: 0x%x",sendValue);
+		logger_log(INFO,"Recv: 0x%x",readValue);
+	}
 
+	sendValue = 0x20;
+	NRF_write_rf_setup(sendValue);
+	readValue = NRF_read_rf_setup();
+	if(readValue == sendValue)
+	{
+		logger_log(INFO,"Write/Read RF Setup Value Matched");
+		logger_log(INFO,"Sent: 0x%x",sendValue);
+		logger_log(INFO,"Recv: 0x%x",readValue);
+	}
+	
 	logger_log(INFO,"Nordic Test End");
 
 	NRF_moduleDisable();
