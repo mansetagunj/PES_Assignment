@@ -191,7 +191,7 @@ remote-install: build
 
 .PHONY:
 code-dump-report:
-	find . \( -name "*.c" -o -name "*.h" \) -exec cat {} \; | cat > codedump_report.pdf
+	find . \( -name "*.c" -o -name "*.h" \) -exec cat {} \; | cat > ./../codedump_report.pdf
 
 .PHONY: help
 help:
