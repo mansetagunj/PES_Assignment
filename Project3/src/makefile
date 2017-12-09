@@ -202,6 +202,9 @@ help:
 	       	4. generate-lib	: Generates the .a library from .o files \n\
 		5. build-lib	: Generates the .a library, links it with main.o to generate .elf output file\n \
 		6. size		: Executes 2. build target and creates a code size file.\n \
+		7. code-dump-report	:Generates the code dump report \n \
+		8. clean-lib	: Cleans the library created \n \
+		9. help		: Shows all the builds and compile time switch available \n \
 	     	Switches available:\n\
 		1. PLATFORM = { HOST, BBB, KL25Z }\n \
 		2. VERBOSE  = true\n"
