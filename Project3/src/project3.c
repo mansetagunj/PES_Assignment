@@ -186,7 +186,7 @@ void profile_memoryFunctions(uint32_t Data_Size)
 		//profiler_setup();
 		tickStart = profiler_getCurrentTick();
 		if(memmove_dma(dst,src,Data_Size) == -1)
-			logger_log(ERROR,"memmovet_dma failed");
+			logger_log(ERROR,"memmove_dma failed");
 #ifdef PLATFORM_KL25Z
 		//while(DMA_CurrentState[DMA_0] != DMA_Complete && DMA_CurrentState[DMA_0] != DMA_Error);
 		while(DMA_CurrentState[DMA_0] == DMA_Busy);
