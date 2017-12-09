@@ -189,7 +189,7 @@ size:	build
 remote-install: build
 	FLASH_KL25Z_Linux.sh
 
-.PHONY
+.PHONY:
 code-dump-report:
 	find . \( -name "*.c" -o -name "*.h" \) -exec cat {} \; | cat > codedump_report.pdf
 
