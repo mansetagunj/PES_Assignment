@@ -63,7 +63,6 @@ void project3()
 	logger_log(INFO,"MEMORY - HEAP SIZE: 0x%x",&HEAP_SIZE);
 	logger_log(INFO,"MEMORY - STACK SIZE: 0x%x",&STACK_SIZE);
 	logger_log(INFO,"MEMORY - HEAP END: 0x%x",&__HeapLimit);
-	logger_log(SYSTEM_BOOTED,"PES PROJECT 3 - KL25Z");
 
 	__enable_irq();
 
