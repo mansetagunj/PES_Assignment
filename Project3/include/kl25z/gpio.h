@@ -48,6 +48,13 @@ typedef enum
 	gpioAlt7
 }GPIO_ALT_FUNC_t;
 
+typedef enum
+{
+	interrupt_disabled = 0,
+	dma_req_rising_edge = 1,
+	interrupt_falling_edge = 10
+}GPIO_Interrup_Type_t;
+
 /**
 * @brief - Enables the GPIO PORT A
 **/
@@ -196,5 +203,20 @@ void GPIO_Blue_Off();
 * @brief - Toggles the Blue LED on KL25Z
 **/
 void GPIO_Blue_Toggle();
+
+/**
+* @brief - Configures the interrupt on GPIO pin
+**/
+void GPIO_config_interrupt(GPIO_PORT_t gpioPort, uint8_t pin, GPIO_Interrup_Type_t interrupt_type);
+
+/**
+* @brief - Gets the interrupt status of GPIO pin
+**/
+uint8_t GPIO_interrupt_status(GPIO_PORT_t gpioPort, uint8_t pin);
+
+/**
+* @brief - Clears the interrupt status on GPIO pin
+**/
+void GPIO_clear_interrupt(GPIO_PORT_t gpioPort, uint8_t pin);
 
 #endif /* __GPIO_H__ */

@@ -1,12 +1,14 @@
 /**
-* @file - gpio.h
+* @file - gpio.c
 * @brief - Gives the HAL implementation for GPIO ports/pins
 *
 * @author Gunj/Ashish University of Colorado Boulder
-* @date 27/10/2017
+* @date 8 Dec 2017
 **/
 
 #include "gpio.h"
+#include "nordic_driver.h"
+#include "logger.h"
 
 //Stores all the GPIO ports' base address
 GPIO_Type * const g_GPIO_PORT[5] = {GPIOA, GPIOB, GPIOC, GPIOD, GPIOE};
@@ -158,5 +160,56 @@ void GPIO_Blue_Off()
 void GPIO_Blue_Toggle()
 {
 	GPIO_PinOutToggle(gpioPortD,1);
+}
+
+void GPIO_config_interrupt(GPIO_PORT_t gpioPort, uint8_t pin, GPIO_Interrup_Type_t interrupt_type)
+{
+	if(gpioPort == gpioPortA || gpioPort == gpioPortD)
+	{
+		g_PORT[gpioPort]->PCR[pin] |= PORT_PCR_IRQC(interrupt_type);
+		NVIC_ClearPendingIRQ(PORTA_IRQn);
+		NVIC_EnableIRQ(PORTA_IRQn);
+		NVIC_ClearPendingIRQ(PORTD_IRQn);
+		NVIC_EnableIRQ(PORTD_IRQn);
+	}
+}
+
+uint8_t GPIO_interrupt_status(GPIO_PORT_t gpioPort, uint8_t pin)
+{
+	if(gpioPort == gpioPortA || gpioPort == gpioPortD)
+		return (g_PORT[gpioPort]->ISFR & (1UL<<pin));
+	else
+		return 0;
+}
+
+void GPIO_clear_interrupt(GPIO_PORT_t gpioPort, uint8_t pin)
+{
+	if(gpioPort == gpioPortA || gpioPort == gpioPortD)
+		g_PORT[gpioPort]->ISFR &= (1UL<<pin);
+}
+
+
+void PORTA_IRQHandler()
+{
+	__disable_irq();
+
+	//interrupt for PTA13
+	if(GPIO_interrupt_status(gpioPortA,13))
+	{
+		logger_log(INFO,"GPIO PTA13 interrupt");
+		GPIO_clear_interrupt(gpioPortA,13);
+		uint8_t nrf_status = NRF_read_status();
+		if(nrf_status & NORDIC_STATUS_RX_DR_MASK)
+		{
+			NRF_write_status(nrf_status | NORDIC_STATUS_RX_DR_MASK);
+			received = 1;
+		}
+		else if(nrf_status & NORDIC_STATUS_TX_DS_MASK)
+		{
+			NRF_write_status(nrf_status | NORDIC_STATUS_TX_DS_MASK);
+			transmitted = 1;
+		}
+	}
+	__enable_irq();
 }
 
