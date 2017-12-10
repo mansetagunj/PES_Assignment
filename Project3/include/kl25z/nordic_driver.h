@@ -20,6 +20,22 @@
 #define NORDIC_IRQ_PORT gpioPortA
 #define NORDIC_IRQ_PIN 13
 
+#define NORDIC_STATUS_RX_DR_MASK			(1<<6)
+#define NORDIC_STATUS_TX_DS_MASK			(1<<5)
+
+volatile uint8_t txconfigured;
+volatile uint8_t rxconfigured;
+
+typedef enum{
+
+	NRF_Mode_TX = 0,
+	NRF_Mode_RX = 1
+
+}NRF_Mode_t;
+
+volatile uint8_t transmitted;
+volatile uint8_t received;
+
 /**
 * @brief - Enable the chip select connection to Nordic
 * @return void
@@ -85,6 +101,13 @@ uint8_t NRF_read_register(uint8_t regAdd);
 void NRF_write_register(uint8_t regAdd, uint8_t value);
 
 /**
+* @brief - Write to the NRF module's status register
+* @param - statusValue uint8_t
+* @return void
+**/
+void NRF_write_status(uint8_t statusValue);
+
+/**
 * @brief - Read the NRF module's status register
 * @return uint8_t
 **/
@@ -102,6 +125,7 @@ void NRF_write_config(uint8_t configValue);
 * @return uint8_t
 **/
 uint8_t NRF_read_config();
+
 
 /**
 * @brief - Read the NRF module's RF setup register
@@ -167,6 +191,11 @@ void NRF_flush_rx_fifo();
 * @return void
 **/
 void NRF_activate_cmd();
+
+void NRF_mode_configure(NRF_Mode_t mode);
+void NRF_read_data(uint8_t *data, uint8_t len);
+void NRF_transmit_data(uint8_t *data, uint8_t len);
+
 
 
 #endif /* __NORDIC_DRIVER_H__ */
