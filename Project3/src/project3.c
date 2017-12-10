@@ -1,9 +1,10 @@
-/*
- * project3.c
- *
- *  Created on: 30-Nov-2017
- *      Author: Gunj Manseta
- */
+/**
+* @file - project3.c
+* @brief - File calling all the functionalities for project3
+*
+* @author Gunj/Ashish University of Colorado Boulder
+* @date 8 Dec 2017
+**/
 
 #include "project3.h"
 #include "memory.h"
@@ -186,7 +187,7 @@ void profile_memoryFunctions(uint32_t Data_Size)
 		//profiler_setup();
 		tickStart = profiler_getCurrentTick();
 		if(memmove_dma(dst,src,Data_Size) == -1)
-			logger_log(ERROR,"memmove_dma failed");
+			logger_log(ERROR,"memmovet_dma failed");
 #ifdef PLATFORM_KL25Z
 		//while(DMA_CurrentState[DMA_0] != DMA_Complete && DMA_CurrentState[DMA_0] != DMA_Error);
 		while(DMA_CurrentState[DMA_0] == DMA_Busy);
@@ -266,26 +267,27 @@ void Nordic_Test()
 	logger_log(INFO, "SPI Initialized");
 	logger_log(INFO,"Nordic Initialized");
 	logger_log(INFO,"Nordic Test");
-	uint8_t sendValue = 0x48;
+	uint8_t sendValue = 0x0F;
 	uint8_t readValue = 0;
-	NRF_write_config(sendValue);
+//	NRF_write_config(sendValue);
 	readValue = NRF_read_config();
 	if(readValue == sendValue)
 	{
-		logger_log(INFO,"Value Matched");
+		logger_log(INFO,"Write/Read Config Value Matched");
 		logger_log(INFO,"Sent: 0x%x",sendValue);
 		logger_log(INFO,"Recv: 0x%x",readValue);
 	}
 
-	uint8_t sendAddr[5] = {0xBA,0x56,0xBA,0x56,0xBA};
-	logger_log(INFO,"TX ADDRESSES SET: 0x%x%x%x%x",sendAddr[0],sendAddr[1],sendAddr[2],sendAddr[3],sendAddr[4]);
+//	uint8_t sendAddr[5] = {0xBA,0x56,0xBA,0x56,0xBA};
+	uint8_t sendAddr[5] = {0xE7,0xE7,0xE7,0xE7,0xE7};
+	logger_log(INFO,"TX ADDRESSES SET: 0x%x%x%x%x%x",sendAddr[0],sendAddr[1],sendAddr[2],sendAddr[3],sendAddr[4]);
 	NRF_write_TX_ADDR(sendAddr);
 	uint8_t *readAddr = (uint8_t*)malloc(5);
 	NRF_read_TX_ADDR(readAddr);
-	logger_log(INFO,"TX ADDRESSES GET: 0x%x%x%x%x\r\n",readAddr[0],readAddr[1],readAddr[2],readAddr[3],readAddr[4]);
+	logger_log(INFO,"TX ADDRESSES GET: 0x%x%x%x%x%x",readAddr[0],readAddr[1],readAddr[2],readAddr[3],readAddr[4]);
 	free(readAddr);
 
-	sendValue = 0x10;
+	sendValue = 0x02;
 	NRF_write_rf_ch(sendValue);
 	readValue = NRF_read_rf_ch();
 	if(readValue == sendValue)
@@ -295,7 +297,7 @@ void Nordic_Test()
 		logger_log(INFO,"Recv: 0x%x",readValue);
 	}
 
-	sendValue = 0x20;
+	sendValue = 0x0F;
 	NRF_write_rf_setup(sendValue);
 	readValue = NRF_read_rf_setup();
 	if(readValue == sendValue)
@@ -304,7 +306,22 @@ void Nordic_Test()
 		logger_log(INFO,"Sent: 0x%x",sendValue);
 		logger_log(INFO,"Recv: 0x%x",readValue);
 	}
-	
+
+	NRF_Mode_t mode = NRF_Mode_RX;
+	logger_log(INFO,"Configuring NRF in %d mode",mode);
+	NRF_mode_configure(mode);
+	uint8_t Data[2] = {0};
+	NRF_read_data(Data,2);
+	logger_log(INFO,"Nordic Data Recvd: 0x%x, 0x%x", Data[0],Data[1]);
+
+
+//	NRF_Mode_t mode = NRF_Mode_TX;
+//	logger_log(INFO,"Configuring NRF in %d mode",mode);
+//	NRF_mode_configure(mode);
+//	uint8_t Data[2] = {0xAA,0x55};
+//	NRF_transmit_data(Data,2);
+//	logger_log(INFO,"Nordic Data Sent: 0x%x, 0x%x", Data[0],Data[1]);
+
 	logger_log(INFO,"Nordic Test End");
 
 	NRF_moduleDisable();
