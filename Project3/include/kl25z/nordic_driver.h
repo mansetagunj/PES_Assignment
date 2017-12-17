@@ -192,8 +192,27 @@ void NRF_flush_rx_fifo();
 **/
 void NRF_activate_cmd();
 
+/**
+* @brief - Configure the NRF module for wireless transmission
+* @param - mode NRF_mode_t
+* @return void
+**/
 void NRF_mode_configure(NRF_Mode_t mode);
+
+/**
+* @brief - Function for receiving data wirelessly via the NRF module
+* @param - data uint8_t *
+* @param - len uint8_t
+* @return void
+**/
 void NRF_read_data(uint8_t *data, uint8_t len);
+
+/**
+* @brief - Function for transmitting data wirelessly via the NRF module
+* @param - data uint8_t *
+* @param - len uint8_t
+* @return void
+**/
 void NRF_transmit_data(uint8_t *data, uint8_t len);
 
 
