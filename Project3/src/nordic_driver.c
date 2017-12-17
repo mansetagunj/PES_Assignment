@@ -294,6 +294,7 @@ void NRF_transmit_data(uint8_t *data, uint8_t len)
 		SPI_read_byte(SPI_0); //used to clear the previously value in the RX FIFO
 		//SPI_read_byte(SPI_0); //used to clear the previously value in the RX FIFO
 
+		//'transmitted' flag is set in the IRQ handler for PORTA (file: gpio.c)
 		while(transmitted == 0);	//wait till TX data is transmitted from FIFO
 		transmitted = 0;
 //		while(!(NORDIC_STATUS_TX_DS_MASK & NRF_read_status()));
@@ -310,6 +311,7 @@ void NRF_read_data(uint8_t *data, uint8_t len)
 {
 	if(rxconfigured)
 	{
+		//'received' flag is set in the IRQ handler for PORTA (file: gpio.c)
 		while(received == 0);	//wait till RX data in FIFO
 		received = 0;
 //		while(!(NORDIC_STATUS_RX_DR_MASK & NRF_read_status()));
