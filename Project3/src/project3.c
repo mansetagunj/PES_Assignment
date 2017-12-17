@@ -307,6 +307,7 @@ void Nordic_Test()
 		logger_log(INFO,"Recv: 0x%x",readValue);
 	}
 
+	//Function calls for configuring the Nordic module in Tx/Rx mode for wireless communication and accordingly reading/writing data
 	NRF_Mode_t mode = NRF_Mode_RX;
 	logger_log(INFO,"Configuring NRF in %d mode",mode);
 	NRF_mode_configure(mode);
