@@ -45,3 +45,9 @@ Builds and Compile Time switches available:
 		Switches available:\n\
 		1. PLATFORM = { HOST, BBB, KL25Z }\n \
 		2. VERBOSE  = true\n"
+
+
+Extra Credit Work:
+1. Python Script to interpret data from Binary Logger: The Python Script used for this work, a sample binary log file and a snapshot of the interpreted output can be found inside the folder 'Python Script Extra Credit'
+2. Accurate Time Stamp: The current epoch time is fetched at run time and fed into the epoch seconds register for accurate time stamps during logging
+3. Wireless communication: The part attempted for this extra credit work can be found through the functions NRF_transmit_data, NRF_read_data and NRF_mode_configure inside the file nordic_driver.c. Currently, an interrupt is getting generated on Nordic's IRQ pin, but there is an issue while flushing out the whole buffer.
